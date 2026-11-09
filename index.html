@@ -36,7 +36,7 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- === 1. 悬浮导航与胶囊按钮样式 === -->
+<!-- === 1. 悬浮导航与胶囊按钮样式 === -->
 <style>
   #app-lang-home-nav {
     position: fixed !important;
@@ -74,7 +74,7 @@
   }
 </style>
 
-<!-- === 2. 动态挂载与 Edge 翻译驱动 === -->
+<!-- === 2. 深度穿透与默认中文执行脚本 === -->
 <script>
   (function() {
     function initTranslate() {
@@ -82,9 +82,25 @@
         setTimeout(initTranslate, 50);
         return;
       }
+
+      // 1. 关键参数设置：声明原网页源语言，关闭原生 UI
+      translate.language.setLocal('english');
       translate.selectLanguageTag.show = false;
       translate.service.use('client.edge');
-      translate.execute();
+
+      // 2. 开启 Shadow DOM 穿透与动态监听
+      if (translate.listener) {
+        translate.listener.isWatchShadowRoot = true;
+        translate.listener.start();
+      }
+
+      // 3. 首次加载如果用户未手动选过语言，默认直接执行中文翻译
+      const currentTarget = translate.language.getCurrent();
+      if (!currentTarget || currentTarget === 'chinese_simplified') {
+        translate.changeLanguage('chinese_simplified');
+      } else {
+        translate.execute();
+      }
 
       if (document.getElementById('app-lang-home-nav')) return;
 
