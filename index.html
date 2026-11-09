@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+  <script src="https://res.zvo.cn/translate/translate.js"></script>
   <head>
     <meta charset="UTF-8" />
     <!-- Primary Meta Tags -->
@@ -35,5 +36,98 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- === 1. 样式 === -->
+<style>
+  #app-lang-home-nav {
+    position: fixed !important;
+    top: 16px !important;
+    right: 20px !important;
+    z-index: 2147483647 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  }
+  .app-nav-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    height: 32px !important;
+    padding: 0 12px !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #1f2937 !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+    backdrop-filter: blur(8px) !important;
+    box-sizing: border-box !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+  .app-nav-btn:hover { background: #ffffff !important; }
+</style>
+
+<!-- === 2. 自动注入与翻译脚本 === -->
+<script>
+  (function() {
+    function initTranslate() {
+      if (typeof translate === 'undefined') {
+        setTimeout(initTranslate, 50);
+        return;
+      }
+      translate.selectLanguageTag.show = false;
+      translate.service.use('client.edge');
+      translate.execute();
+
+      if (document.getElementById('app-lang-home-nav')) return;
+
+      const nav = document.createElement('div');
+      nav.id = 'app-lang-home-nav';
+      nav.className = 'notranslate';
+      nav.innerHTML = `
+        <a href="https://walter19821015.ccwu.cc" class="app-nav-btn notranslate">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          <span>首页</span>
+        </a>
+        <div style="position:relative;display:inline-flex;align-items:center;" class="notranslate">
+          <button id="langMenuBtn" type="button" class="app-nav-btn notranslate">
+            <span>🌐 语言</span>
+            <span style="font-size:10px;opacity:0.7;">▼</span>
+          </button>
+          <div id="langMenu" class="notranslate" style="display:none;position:absolute;right:0;top:calc(100% + 6px);width:120px;background:#ffffff;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,0.15);border:1px solid #e5e7eb;overflow:hidden;z-index:2147483647;padding:4px 0;">
+            <a href="javascript:translate.changeLanguage('chinese_simplified');" class="notranslate" style="display:block;padding:8px 14px;color:#374151;font-size:13px;text-decoration:none;">简体中文</a>
+            <a href="javascript:translate.changeLanguage('english');" class="notranslate" style="display:block;padding:8px 14px;color:#374151;font-size:13px;text-decoration:none;">English</a>
+            <a href="javascript:translate.changeLanguage('spanish Arm');" class="notranslate" onclick="translate.changeLanguage('spanish');return false;" style="display:block;padding:8px 14px;color:#374151;font-size:13px;text-decoration:none;">Español</a>
+            <a href="javascript:translate.changeLanguage('arabic');" class="notranslate" style="display:block;padding:8px 14px;color:#374151;font-size:13px;text-decoration:none;">العربية</a>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(nav);
+
+      const btn = document.getElementById('langMenuBtn');
+      const menu = document.getElementById('langMenu');
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+      };
+      document.addEventListener('click', function(e) {
+        if (!nav.contains(e.target)) menu.style.display = 'none';
+      });
+      menu.onclick = function() { menu.style.display = 'none'; };
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initTranslate);
+    } else {
+      initTranslate();
+    }
+  })();
+</script>
   </body>
 </html>
